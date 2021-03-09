@@ -7,10 +7,11 @@
   "author": "João Miguel Ströher",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "mongoose": "^5.11.19",
-    "yup": "^0.32.9"
+    "express-async-errors": "^3.1.1",
+    "mongoose": "^5.11.19"
   },
   "devDependencies": {
     "@babel/core": "^7.13.10",
