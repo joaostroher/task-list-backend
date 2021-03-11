@@ -4,13 +4,34 @@ import { ValidationError, NotFoundError } from '~/app/errors';
 
 class TaskController {
   async index(req, res) {
-    const tasks = await Task.find();
-    return res.json(tasks);
+    // Make the complete and search filter
+    const { completed, search } = req.query;
+    const filter = {};
+    if (completed != null) filter.completed = completed;
+    if (search != null && search.trim() !== '')
+      filter.description = { $regex: `.*${search}.*`, $options: 'i' };
+
+    // Set limit, get page and calculate the skip
+    const limit = Math.min(Math.max(req.query.limit || 10, 5), 100);
+    const page = Math.max(req.query.page || 1, 1);
+    const skip = (page - 1) * limit;
+
+    // Get the data
+    const tasks = await Task.find(filter)
+      .sort({ created_at: -1 })
+      .limit(limit)
+      .skip(skip);
+
+    // Get the count and calculate the number of pages
+    const count = await Task.countDocuments(filter);
+    const pages = Math.ceil(count / limit);
+
+    // Build the response
+    return res.json({ pages, items: tasks });
   }
 
   async store(req, res) {
     const { description } = req.body;
-
     if (!description?.trim()) {
       throw new ValidationError('Field description is required');
     }

@@ -11,11 +11,6 @@ export const TaskSchema = new Schema(
       required: true,
       default: false,
     },
-    deleted_at: {
-      type: Date,
-      required: false,
-      default: null,
-    },
   },
   {
     timestamps: {
